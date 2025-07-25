@@ -20,3 +20,19 @@ for asset in account["balances"]:
     if float(asset["free"]) > 0:
     
         print(asset)
+        
+order = cliente_binance.create_order(
+    symbol = "SOLBRL",
+    side = SIDE_BUY, 
+    type = ORDER_TYPE_MARKET, 
+    quantity = 0.015
+)
+
+account = cliente_binance.get_account()
+
+lista_1 = ('BTC', 'ETH', 'SOL')
+
+for asset in account["balances"]:
+    if float(asset["free"]) > 0:
+    
+        print(asset)

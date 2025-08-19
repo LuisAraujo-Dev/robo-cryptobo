@@ -56,3 +56,46 @@ def get_data(code, interval):
     print(prices)
     
 get_data(code=code_operated, interval=candle_periode)
+
+def strategy_trade(data, code_operated, quantity, atual_position):
+
+    data["fast_mean"] = data["closed"].rolling(window=7).mean()
+    data["low_mean"] = data["closed"].rolling(window=40).mean()
+
+    last_fast_mean = data["fast_mean"].iloc[-1] 
+    last_low_mean = data["low_mean"].iloc[-1]
+
+    account = cliente_binance.get_account()
+
+    lista_1 = ('BTC', 'ETH', 'SOL')
+
+    for asset in account["balances"]:
+    if asset["asset"] == code_operated:
+    
+        quantity = float(asset["free"])
+
+    if last_fast_mean > last_low_mean:
+        
+        if atual_position == False:
+
+            order = cliente_binance.create_order(
+                symbol = code_operated,
+                side = SIDE_BUY, 
+                type = ORDER_TYPE_MARKET, 
+                quantity = quantity
+            )
+            print("Comprou o ativo")
+            atual_position = True
+    
+    elif last_fast_mean < last_low_mean: 
+
+        if atual_position == True:
+
+            order = cliente_binance.create_order(
+                symbol = code_operated,
+                side = SIDE_SELL, 
+                type = ORDER_TYPE_MARKET, 
+                quantity = int(atual_position)
+            )
+            print("Vendeu o ativo")
+            atual_position = False
